@@ -73,6 +73,7 @@ class User(db.Model):
     )
 
     messages = db.relationship('Message', backref='user', lazy='dynamic')
+    reactions = db.relationship('Reaction', backref='user')
 
     followers = db.relationship(
         "User",
@@ -161,6 +162,23 @@ class Message(db.Model):
         db.ForeignKey('users.id', ondelete='CASCADE'),
         nullable=False,
     )
+    reaction = db.relationship('Reaction', backref='message')
+
+
+class Reaction(db.Model):
+    """reactions"""
+    __tablename__ = 'reactions'
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False, primary_key=True)
+    message_id = db.Column(
+        db.Integer,
+        db.ForeignKey('messages.id', ondelete='CASCADE'),
+        nullable=False, primary_key=True)
+    reaction_type = db.Column(
+        db.String, nullable=False, primary_key=True)
 
 
 def connect_db(app):

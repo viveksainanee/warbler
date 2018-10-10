@@ -1,11 +1,11 @@
 import os
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, MessageForm
-from models import db, connect_db, User, Message
+from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
+from models import db, connect_db, User, Message, Reaction
 
 CURR_USER_KEY = "curr_user"
 
@@ -72,7 +72,7 @@ def signup():
                 username=form.data['username'],
                 password=form.data['password'],
                 email=form.data['email'],
-                image_url=form.data['image_url'],
+                image_url=form.data['image_url'] or None,
             )
             db.session.commit()
 
@@ -116,10 +116,14 @@ def logout():
     return redirect("/login")
 
 
-
-
 ##############################################################################
 # General user routes:
+
+#### DELETE AFTER IF NOT NEEDED ############
+# @app.route('/getcurrentuser')
+# def get_curr_user():
+#     return jsonify({'user': session[CURR_USER_KEY]})
+
 
 @app.route('/users')
 def list_users():
@@ -203,8 +207,31 @@ def stop_following(follow_id):
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
+    # if user is logged in
+    if g.user:
+        # if they subbmited the form
+        # user = User.query.get_or_404(session[CURR_USER_KEY])
+        form = UserEditForm(obj=g.user)
 
-    # IMPLEMENT THIS
+        if form.validate_on_submit():
+            # validate password
+            if User.authenticate(g.user.username, request.form["password"]):
+                g.user.username = request.form["username"]
+                g.user.email = request.form["email"]
+                g.user.image_url = request.form["image_url"] or None
+                g.user.header_image_url = request.form["header_image_url"] or None
+                g.user.bio = request.form["bio"] or None
+                db.session.commit()
+                flash("Sucessfully updated", "success")
+                return redirect(f"users/{g.user.id}")
+            else:
+                flash("Wrong password!", "danger")
+                return redirect("/users/profile")
+        else:
+            return render_template("/users/edit.html", form=form)
+    else:
+        flash('Please login', "info")
+        redirect("/login")
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -271,6 +298,39 @@ def messages_destroy(message_id):
 
     return redirect(f"/users/{g.user.id}")
 
+##############################################################################
+# Reaction routes:
+
+
+@app.route('/addreaction', methods=["POST"])
+def add_reaction():
+    """Add reaction to DB"""
+    if not g.user:
+        flash("Unauthorized to complete action", "danger")
+        return redirect("/")
+
+    reaction_type = request.json["type"]
+    msg_id = request.json["msgId"]
+    reaction = Reaction(user_id=g.user.id, message_id=msg_id,
+                        reaction_type=reaction_type)
+    db.session.add(reaction)
+    db.session.commit()
+    return jsonify({'msg': 'Added Reaction!'})
+
+
+@app.route('/deletereaction', methods=["DELETE"])
+def delete_reaction():
+    """Delete reaction to DB"""
+    if not g.user:
+        flash("Unauthorized to complete action", "danger")
+        return redirect("/")
+
+    reaction_type = request.json["type"]
+    msg_id = request.json["msgId"]
+    reaction = Reaction.query.get((g.user.id, msg_id, reaction_type))
+    db.session.delete(reaction)
+    db.session.commit()
+    return jsonify({'msg': 'Deleted Reaction!'})
 
 ##############################################################################
 # Homepage and error pages
@@ -289,11 +349,24 @@ def homepage():
 
         messages = (Message
                     .query
+                    .filter(Message.user_id.in_(following_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
+        sad = {reaction.message_id for reaction in Reaction.query.filter(
+            Reaction.reaction_type == 'sad', Reaction.user_id == g.user.id).all()}
+
+        angry = {reaction.message_id for reaction in Reaction.query.filter(
+            Reaction.reaction_type == 'angry', Reaction.user_id == g.user.id).all()}
+
+        smile = {reaction.message_id for reaction in Reaction.query.filter(
+            Reaction.reaction_type == 'smile', Reaction.user_id == g.user.id).all()}
+
+        laugh = {reaction.message_id for reaction in Reaction.query.filter(
+            Reaction.reaction_type == 'laugh', Reaction.user_id == g.user.id).all()}
+
+        return render_template('home.html', messages=messages, sad=sad, smile=smile, laugh=laugh, angry=angry)
 
     else:
         return render_template('home-anon.html')

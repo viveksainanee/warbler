@@ -541,3 +541,35 @@ p.card-bio {
   max-height: 100%;
   min-height: 100%;
 }
+
+.far:hover,
+.fas:hover {
+  font-size: 30px;
+}
+
+.fa-laugh-squint:hover,
+.fas.fa-laugh-squint {
+  color: yellowgreen;
+}
+
+.fa-smile:hover,
+.fas.fa-smile {
+  color: yellow;
+}
+
+.fa-sad-cry:hover,
+.fas.fa-sad-cry {
+  color: lightblue;
+}
+
+.fa-angry:hover,
+.fas.fa-angry {
+  color: orangered;
+}
+
+.reactions {
+  display: block;
+  z-index: 59999999999999999999999999;
+  line-height: 40px;
+  margin-left: 27px;
+}
