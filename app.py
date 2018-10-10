@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, MessageForm
+from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
 from models import db, connect_db, User, Message
 
 CURR_USER_KEY = "curr_user"
@@ -37,7 +37,7 @@ def add_user_to_g():
         g.user = User.query.get(session[CURR_USER_KEY])
 
     else:
-        g.user = None
+        g.user = None 
 
 
 def do_login(user):
@@ -72,7 +72,7 @@ def signup():
                 username=form.data['username'],
                 password=form.data['password'],
                 email=form.data['email'],
-                image_url=form.data['image_url'],
+                image_url=form.data['image_url'] or None,
             )
             db.session.commit()
 
@@ -203,8 +203,35 @@ def stop_following(follow_id):
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
+    # if user is logged in
+    if g.user:
+        # if they subbmited the form
+        # user = User.query.get_or_404(session[CURR_USER_KEY])
+        form = UserEditForm(obj=g.user)
 
-    # IMPLEMENT THIS
+        if form.validate_on_submit():
+            #validate password
+            if User.authenticate(g.user.username, request.form["password"]):
+                g.user.username=request.form["username"]
+                g.user.email=request.form["email"]
+                g.user.image_url=request.form["image_url"] or None
+                g.user.header_image_url=request.form["header_image_url"] or None  
+                g.user.bio=request.form["bio"] or None
+                db.session.commit()
+                flash("Sucessfully updated", "success")
+                return redirect(f"users/{g.user.id}") 
+            else:
+                flash("Wrong password!", "danger")
+                return redirect ("/users/profile")
+        else:
+            return render_template("/users/edit.html", form=form)
+    else:
+        flash('Please login', "info")
+        redirect ("/login")
+
+
+
+
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -289,6 +316,7 @@ def homepage():
 
         messages = (Message
                     .query
+                    .filter(Message.user_id.in_(following_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())

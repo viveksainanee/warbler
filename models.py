@@ -162,6 +162,22 @@ class Message(db.Model):
         nullable=False,
     )
 
+class Reaction(db.Model):
+    """reactions"""
+    __tablename__ = 'reactions'
+    
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False, primary_key=True)
+    message_id = db.Column(
+        db.Integer,
+        db.ForeignKey('messages.id', ondelete='CASCADE'),
+        nullable=False, primary_key=True)
+    reaction_type = db.Column(
+        db.String, nullable=False)
+    
+
 
 def connect_db(app):
     """Connect this database to provided Flask app.
