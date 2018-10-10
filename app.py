@@ -5,7 +5,11 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
+<<<<<<< HEAD
 from models import db, connect_db, User, Message, Reaction
+=======
+from models import db, connect_db, User, Message
+>>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
 
 CURR_USER_KEY = "curr_user"
 
@@ -37,7 +41,7 @@ def add_user_to_g():
         g.user = User.query.get(session[CURR_USER_KEY])
 
     else:
-        g.user = None
+        g.user = None 
 
 
 def do_login(user):
@@ -214,6 +218,7 @@ def profile():
         form = UserEditForm(obj=g.user)
 
         if form.validate_on_submit():
+<<<<<<< HEAD
             # validate password
             if User.authenticate(g.user.username, request.form["password"]):
                 g.user.username = request.form["username"]
@@ -227,11 +232,34 @@ def profile():
             else:
                 flash("Wrong password!", "danger")
                 return redirect("/users/profile")
+=======
+            #validate password
+            if User.authenticate(g.user.username, request.form["password"]):
+                g.user.username=request.form["username"]
+                g.user.email=request.form["email"]
+                g.user.image_url=request.form["image_url"] or None
+                g.user.header_image_url=request.form["header_image_url"] or None  
+                g.user.bio=request.form["bio"] or None
+                db.session.commit()
+                flash("Sucessfully updated", "success")
+                return redirect(f"users/{g.user.id}") 
+            else:
+                flash("Wrong password!", "danger")
+                return redirect ("/users/profile")
+>>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
         else:
             return render_template("/users/edit.html", form=form)
     else:
         flash('Please login', "info")
+<<<<<<< HEAD
         redirect("/login")
+=======
+        redirect ("/login")
+
+
+
+
+>>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
 
 
 @app.route('/users/delete', methods=["POST"])

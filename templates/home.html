@@ -41,21 +41,38 @@
     <div class="col-lg-6 col-md-8 col-sm-12">
       <ul class="list-group" id="messages">
         {% for msg in messages %}
+<<<<<<< HEAD
           <li class="list-group-item" id="{{ msg.id }}">
             <div class='container'>
             <div class='row'> 
               <div class='col-2'> 
+=======
+          <li class="list-group-item">
+            <div class='container'>
+            <div class='row'> 
+              <div class='col-1'> 
+>>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
                   <a href="/messages/{{ msg.id  }}" class="message-link">
                     <a href="/users/{{ msg.user.id }}">
                       <img src="{{ msg.user.image_url }}" alt="" class="timeline-image">
                     </a>
+<<<<<<< HEAD
               </div>
               <div class='col-10'>
+=======
+      
+
+
+              </div>
+              <div class='col-11'>
+
+>>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
                 <div class="message-area">
                   <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
                   <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
                   <p>{{ msg.text }}</p>
                 </div>
+<<<<<<< HEAD
                 <div class='row'> 
                   <div class='reactions'>
                       {% if msg.id in smile %}
@@ -83,6 +100,18 @@
               </div>
             </div>
             
+=======
+              </div>
+            </div>
+            <div class='row'> 
+              <div class='reactions'>
+                  <i class="far fa-smile"></i>
+                  <i class="far fa-sad-cry"></i>
+                  <i class="far fa-laugh-squint"></i>
+                  <i class="far fa-angry"></i>  
+              </div>
+            </div>
+>>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
           </div>
 
           </li>

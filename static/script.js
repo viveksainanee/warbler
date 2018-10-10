@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const BASE_URL = 'http://localhost:5000';
 
 $(document).ready(function() {
@@ -68,3 +69,12 @@ function deleteReaction(type, msgId, cb) {
     }
   });
 }
+=======
+// $(document).ready(function() {
+//   console.log('page loaded');
+//   $('.reactions').on('mouseover', function(evt) {
+//     console.log('hovered');
+//     $(evt.target).attr('style', 'font-size: 40px');
+//   });
+// });
+>>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
