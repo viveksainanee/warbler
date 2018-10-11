@@ -170,4 +170,54 @@ class UserViewTestCase(TestCase):
             resp = c.get(f'/users/{self.testuser.id}/reactions')
             self.assertIn(b'test message', resp.data)
 
-    def
+    def test_follow(self):
+        """Can follow?"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            # test post
+            resp = c.post('/users/follow/4')
+            followerfollowee = FollowersFollowee.query.get((1, 4))
+            self.assertTrue(followerfollowee)
+
+    def test_unfollow(self):
+        """Can Unfollow"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            # test post
+            resp = c.post('/users/stop-following/2')
+            followerfollowee = FollowersFollowee.query.all()
+            self.assertEqual(len(followerfollowee), 1)
+
+    def test_show_profile(self):
+        """Can show and update profile?"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            # test get
+            resp = c.get('/users/profile')
+            self.assertIn(b'Edit Your Profile.', resp.data)
+
+            # test post
+            resp = c.post('/users/profile', data={"username": "testuser5", "email": "test5@test.com",
+                                                  "password": "testuser", "image_url": "/static/images/default-pic.png",
+                                                  "header_image_url": "/static/images/warbler-hero.jpg", "bio": "bio"})
+            self.assertEqual(resp.status_code, 302)
+            user = User.query.get(self.testuser.id)
+            self.assertEqual(user.username, "testuser5")
+            self.assertEqual(user.email, "test5@test.com")
+
+    def test_delete_user(self):
+        """Can delete user?"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            # test post
+            resp = c.post('/users/delete')
+            users = User.query.all()
+            self.assertEqual(len(users), 2)
