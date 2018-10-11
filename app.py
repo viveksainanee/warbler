@@ -37,7 +37,7 @@ def add_user_to_g():
         g.user = User.query.get(session[CURR_USER_KEY])
 
     else:
-        g.user = None 
+        g.user = None
 
 
 def do_login(user):
@@ -65,7 +65,6 @@ def signup():
     """
 
     form = UserAddForm()
-
     if form.validate_on_submit():
         try:
             user = User.signup(
@@ -196,15 +195,11 @@ def users_reactions(user_id):
     angry = g.user.get_reactions("angry")
 
     reaction_types = {"fa-smile": smile,
-        "fa-sad-cry": sad,
-        "fa-laugh-squint": laugh,
-        "fa-angry": angry}
+                      "fa-sad-cry": sad,
+                      "fa-laugh-squint": laugh,
+                      "fa-angry": angry}
 
-
-
-    return render_template('users/reactions.html', user=user, messages = messages, reaction_types=reaction_types, reactions_number=len(messages))
-
-
+    return render_template('users/reactions.html', user=user, messages=messages, reaction_types=reaction_types, reactions_number=len(messages))
 
 
 @app.route('/users/follow/<int:follow_id>', methods=['POST'])
@@ -390,18 +385,13 @@ def homepage():
         smile = g.user.get_reactions("smile")
         laugh = g.user.get_reactions("laugh")
         angry = g.user.get_reactions("angry")
-        
-
 
         my_msgs = g.user.get_my_messages()
 
         reaction_types = {"fa-smile": smile,
-        "fa-sad-cry": sad,
-        "fa-laugh-squint": laugh,
-        "fa-angry": angry}
-
-
-
+                          "fa-sad-cry": sad,
+                          "fa-laugh-squint": laugh,
+                          "fa-angry": angry}
 
         return render_template('home.html', messages=messages, reaction_types=reaction_types, my_msgs=my_msgs)
 
