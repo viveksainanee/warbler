@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const BASE_URL = 'http://localhost:5000';
 
 $(document).ready(function() {
@@ -11,8 +10,15 @@ $(document).ready(function() {
     };
     let type = $(evt.target)
       .attr('class')
-      .split(' ')[1];
-    type = classObj[type];
+      .split(' ');
+    str1 = type[0];
+    str2 = type[1];
+    if (str1.length > str2.length) {
+      type = classObj[str1];
+    } else {
+      type = classObj[str2];
+    }
+
     let msgId = $(evt.target)
       .parent()
       .parent()
@@ -69,12 +75,3 @@ function deleteReaction(type, msgId, cb) {
     }
   });
 }
-=======
-// $(document).ready(function() {
-//   console.log('page loaded');
-//   $('.reactions').on('mouseover', function(evt) {
-//     console.log('hovered');
-//     $(evt.target).attr('style', 'font-size: 40px');
-//   });
-// });
->>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de

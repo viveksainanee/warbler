@@ -1,0 +1,50 @@
+{% extends 'users/detail.html' %}
+{% block user_details %}
+  <div class="col-sm-9">
+    <div class="row">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <ul class="list-group" id="messages">
+              {% for msg in messages %}
+                <li class="list-group-item" id="{{ msg.id }}">
+                  <div class='container'>
+                  <div class='row'> 
+                    <div class='col-2'> 
+                        <a href="/messages/{{ msg.id  }}" class="message-link">
+                          <a href="/users/{{ msg.user.id }}">
+                            <img src="{{ msg.user.image_url }}" alt="" class="timeline-image">
+                          </a>
+                    </div>
+                    <div class='col-10'>
+                      <div class="message-area">
+                        <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
+                        <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
+                        <p>{{ msg.text }}</p>
+                      </div>
+                      {% if msg.id not in my_msgs %}
+                      <div class='row'> 
+                        <div class='reactions'>
+                            {% for reaction_class in reaction_types %}
+                              {% if msg.id in reaction_types[reaction_class] %}
+                              <i class="fas {{reaction_class}}"></i>
+                              {% else %}
+                              <i class="far {{reaction_class}}"></i>
+                              {% endif %}
+                            {% endfor %}
+      
+                        </div>
+                      </div>
+                      {% endif %}
+      
+                    </div>
+                  </div>
+                  
+                </div>
+      
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+    </div>
+  </div>
+{% endblock %}

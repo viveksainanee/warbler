@@ -73,6 +73,7 @@ class User(db.Model):
     )
 
     messages = db.relationship('Message', backref='user', lazy='dynamic')
+    reacted_messages = db.relationship('Message', secondary="reactions", backref="users_who_reacted")
     reactions = db.relationship('Reaction', backref='user')
 
     followers = db.relationship(
@@ -134,6 +135,13 @@ class User(db.Model):
                 return user
 
         return False
+    
+    def get_reactions(self, reaction_type):
+        return {message_id[0] for message_id in db.session.query(Reaction.message_id).filter(
+            Reaction.reaction_type == reaction_type, Reaction.user_id == self.id).all()}
+
+    def get_my_messages(self):
+        return {message_id[0] for message_id in db.session.query(Message.id).filter(Message.user_id == self.id).all()}
 
 
 class Message(db.Model):
@@ -179,22 +187,6 @@ class Reaction(db.Model):
         nullable=False, primary_key=True)
     reaction_type = db.Column(
         db.String, nullable=False, primary_key=True)
-
-class Reaction(db.Model):
-    """reactions"""
-    __tablename__ = 'reactions'
-    
-    user_id = db.Column(
-        db.Integer,
-        db.ForeignKey('users.id', ondelete='CASCADE'),
-        nullable=False, primary_key=True)
-    message_id = db.Column(
-        db.Integer,
-        db.ForeignKey('messages.id', ondelete='CASCADE'),
-        nullable=False, primary_key=True)
-    reaction_type = db.Column(
-        db.String, nullable=False)
-    
 
 
 def connect_db(app):

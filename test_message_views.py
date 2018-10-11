@@ -71,3 +71,51 @@ class MessageViewTestCase(TestCase):
 
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
+
+
+
+    def test_show_message(self):
+        """Can user see a message?"""
+
+        # Since we need to change the session to mimic logging in,
+        # we need to use the changing-session trick:
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            # Now, that session setting is saved, so we can have
+            # the rest of ours test
+            c.post("/messages/new", data={"text": "Hello"})
+            msg = Message.query.first()    
+            resp = c.get(f"/messages/{msg.id}")
+
+            # Make sure the html in response has the right text
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(b'Hello', resp.data)
+
+
+    def test_destroy_message(self):
+        """Can user destroy a message?"""
+
+        # Since we need to change the session to mimic logging in,
+        # we need to use the changing-session trick:
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            # Now, that session setting is saved, so we can have
+            # the rest of ours test
+            c.post("/messages/new", data={"text": "Hello"})
+            c.post("/messages/new", data={"text": "Hello2"})
+            msg = Message.query.all()
+            resp = c.post(f"/messages/{msg[0].id}/delete")
+
+            new_message_list = Message.query.all()
+
+            # Make sure it redirects
+            self.assertEqual(resp.status_code, 302)
+            self.assertEqual(len(new_message_list), 1)
+
+

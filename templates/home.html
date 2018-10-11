@@ -41,77 +41,38 @@
     <div class="col-lg-6 col-md-8 col-sm-12">
       <ul class="list-group" id="messages">
         {% for msg in messages %}
-<<<<<<< HEAD
           <li class="list-group-item" id="{{ msg.id }}">
             <div class='container'>
             <div class='row'> 
               <div class='col-2'> 
-=======
-          <li class="list-group-item">
-            <div class='container'>
-            <div class='row'> 
-              <div class='col-1'> 
->>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
                   <a href="/messages/{{ msg.id  }}" class="message-link">
                     <a href="/users/{{ msg.user.id }}">
                       <img src="{{ msg.user.image_url }}" alt="" class="timeline-image">
                     </a>
-<<<<<<< HEAD
               </div>
               <div class='col-10'>
-=======
-      
-
-
-              </div>
-              <div class='col-11'>
-
->>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
                 <div class="message-area">
                   <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
                   <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
                   <p>{{ msg.text }}</p>
                 </div>
-<<<<<<< HEAD
+                {% if msg.id not in my_msgs %}
                 <div class='row'> 
                   <div class='reactions'>
-                      {% if msg.id in smile %}
-                      <i class="fas fa-smile"></i>
-                      {% else %}
-                      <i class="far fa-smile"></i>
-                      {% endif%}
-                      {% if msg.id in sad %}
-                      <i class="fas fa-sad-cry"></i>
-                      {% else %}
-                      <i class="far fa-sad-cry"></i>
-                      {% endif %}
-                      {% if msg.id in laugh %}
-                      <i class="fas fa-laugh-squint"></i>
-                      {% else %}
-                      <i class="far fa-laugh-squint"></i>
-                      {% endif %}
-                      {% if msg.id in angry %}
-                      <i class="fas fa-angry"></i>
-                      {% else %}
-                      <i class="far fa-angry"></i>
-                      {% endif %} 
+                      {% for reaction_class in reaction_types %}
+                        {% if msg.id in reaction_types[reaction_class] %}
+                        <i class="fas {{reaction_class}}"></i>
+                        {% else %}
+                        <i class="far {{reaction_class}}"></i>
+                        {% endif %}
+                      {% endfor %}
+
                   </div>
                 </div>
+                {% endif %}
               </div>
             </div>
             
-=======
-              </div>
-            </div>
-            <div class='row'> 
-              <div class='reactions'>
-                  <i class="far fa-smile"></i>
-                  <i class="far fa-sad-cry"></i>
-                  <i class="far fa-laugh-squint"></i>
-                  <i class="far fa-angry"></i>  
-              </div>
-            </div>
->>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
           </div>
 
           </li>

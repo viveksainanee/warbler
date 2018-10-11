@@ -5,11 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
-<<<<<<< HEAD
 from models import db, connect_db, User, Message, Reaction
-=======
-from models import db, connect_db, User, Message
->>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
 
 CURR_USER_KEY = "curr_user"
 
@@ -151,7 +147,8 @@ def users_show(user_id):
     """Show user profile."""
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/show.html', user=user)
+    reactions_number = len(user.reacted_messages)
+    return render_template('users/show.html', user=user, reactions_number=reactions_number)
 
 
 @app.route('/users/<int:user_id>/following')
@@ -163,7 +160,9 @@ def show_following(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/following.html', user=user)
+    reactions_number = len(user.reacted_messages)
+
+    return render_template('users/following.html', user=user, reactions_number=reactions_number)
 
 
 @app.route('/users/<int:user_id>/followers')
@@ -175,7 +174,37 @@ def users_followers(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/followers.html', user=user)
+    reactions_number = len(user.reacted_messages)
+
+    return render_template('users/followers.html', user=user, reactions_number=reactions_number)
+
+
+@app.route('/users/<int:user_id>/reactions')
+def users_reactions(user_id):
+    """Show list of reactions of this user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    messages = user.reacted_messages
+
+    sad = g.user.get_reactions("sad")
+    smile = g.user.get_reactions("smile")
+    laugh = g.user.get_reactions("laugh")
+    angry = g.user.get_reactions("angry")
+
+    reaction_types = {"fa-smile": smile,
+        "fa-sad-cry": sad,
+        "fa-laugh-squint": laugh,
+        "fa-angry": angry}
+
+
+
+    return render_template('users/reactions.html', user=user, messages = messages, reaction_types=reaction_types, reactions_number=len(messages))
+
+
 
 
 @app.route('/users/follow/<int:follow_id>', methods=['POST'])
@@ -218,7 +247,6 @@ def profile():
         form = UserEditForm(obj=g.user)
 
         if form.validate_on_submit():
-<<<<<<< HEAD
             # validate password
             if User.authenticate(g.user.username, request.form["password"]):
                 g.user.username = request.form["username"]
@@ -232,34 +260,11 @@ def profile():
             else:
                 flash("Wrong password!", "danger")
                 return redirect("/users/profile")
-=======
-            #validate password
-            if User.authenticate(g.user.username, request.form["password"]):
-                g.user.username=request.form["username"]
-                g.user.email=request.form["email"]
-                g.user.image_url=request.form["image_url"] or None
-                g.user.header_image_url=request.form["header_image_url"] or None  
-                g.user.bio=request.form["bio"] or None
-                db.session.commit()
-                flash("Sucessfully updated", "success")
-                return redirect(f"users/{g.user.id}") 
-            else:
-                flash("Wrong password!", "danger")
-                return redirect ("/users/profile")
->>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
         else:
-            return render_template("/users/edit.html", form=form)
+            return render_template("/users/edit.html", form=form, user_id=g.user.id)
     else:
         flash('Please login', "info")
-<<<<<<< HEAD
         redirect("/login")
-=======
-        redirect ("/login")
-
-
-
-
->>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -352,7 +357,6 @@ def delete_reaction():
     if not g.user:
         flash("Unauthorized to complete action", "danger")
         return redirect("/")
-
     reaction_type = request.json["type"]
     msg_id = request.json["msgId"]
     reaction = Reaction.query.get((g.user.id, msg_id, reaction_type))
@@ -382,19 +386,24 @@ def homepage():
                     .limit(100)
                     .all())
 
-        sad = {reaction.message_id for reaction in Reaction.query.filter(
-            Reaction.reaction_type == 'sad', Reaction.user_id == g.user.id).all()}
+        sad = g.user.get_reactions("sad")
+        smile = g.user.get_reactions("smile")
+        laugh = g.user.get_reactions("laugh")
+        angry = g.user.get_reactions("angry")
+        
 
-        angry = {reaction.message_id for reaction in Reaction.query.filter(
-            Reaction.reaction_type == 'angry', Reaction.user_id == g.user.id).all()}
 
-        smile = {reaction.message_id for reaction in Reaction.query.filter(
-            Reaction.reaction_type == 'smile', Reaction.user_id == g.user.id).all()}
+        my_msgs = g.user.get_my_messages()
 
-        laugh = {reaction.message_id for reaction in Reaction.query.filter(
-            Reaction.reaction_type == 'laugh', Reaction.user_id == g.user.id).all()}
+        reaction_types = {"fa-smile": smile,
+        "fa-sad-cry": sad,
+        "fa-laugh-squint": laugh,
+        "fa-angry": angry}
 
-        return render_template('home.html', messages=messages, sad=sad, smile=smile, laugh=laugh, angry=angry)
+
+
+
+        return render_template('home.html', messages=messages, reaction_types=reaction_types, my_msgs=my_msgs)
 
     else:
         return render_template('home-anon.html')

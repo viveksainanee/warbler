@@ -542,7 +542,6 @@ p.card-bio {
   min-height: 100%;
 }
 
-<<<<<<< HEAD
 .far:hover,
 .fas:hover {
   font-size: 30px;
@@ -565,36 +564,12 @@ p.card-bio {
 
 .fa-angry:hover,
 .fas.fa-angry {
-=======
-.far:hover {
-  font-size: 30px;
-}
-
-.fa-laugh-squint:hover {
-  color: yellowgreen;
-}
-
-.fa-smile:hover {
-  color: yellow;
-}
-
-.fa-sad-cry:hover {
-  color: lightblue;
-}
-
-.fa-angry:hover {
->>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
   color: orangered;
 }
 
 .reactions {
   display: block;
   z-index: 59999999999999999999999999;
-<<<<<<< HEAD
   line-height: 40px;
   margin-left: 27px;
-=======
-  margin-left: 70px;
-  line-height: 40px;
->>>>>>> edfb58e0e2ff6e28e4623a9e8297122a1d4398de
 }
