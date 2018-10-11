@@ -73,8 +73,10 @@ class User(db.Model):
     )
 
     messages = db.relationship('Message', backref='user', lazy='dynamic')
-    reacted_messages = db.relationship('Message', secondary="reactions", backref="users_who_reacted")
-    reactions = db.relationship('Reaction', backref='user')
+    reacted_messages = db.relationship(
+        'Message', secondary="reactions", backref="users_who_reacted")
+    reactions = db.relationship(
+        'Reaction', backref='user', cascade="all,delete-orphan")
 
     followers = db.relationship(
         "User",
@@ -135,7 +137,7 @@ class User(db.Model):
                 return user
 
         return False
-    
+
     def get_reactions(self, reaction_type):
         return {message_id[0] for message_id in db.session.query(Reaction.message_id).filter(
             Reaction.reaction_type == reaction_type, Reaction.user_id == self.id).all()}
