@@ -1,38 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
   <div class="row">
-    {% for thread in my_user1_threads %}
+    {% for thread in my_user2_threads %}
     <div class='row'> 
         <div class='col-2'> 
             <a href="/threads/{{ thread.id  }}" class="message-link">
-              <a href="/users/{{ thread.user2_id }}">
-                <img src="{{ msg.user.image_url }}" alt="" class="timeline-image">
-              </a>
+                <img src="{{ thread.user1.image_url }}" alt="" class="timeline-image">
+                <div>{{thread.user1.username}}</div></a>
         </div>
         <div class='col-10'>
-          <div class="message-area">
-            <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
-            <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
-            <p>{{ msg.text }}</p>
-          </div>
-          {% if msg.id not in my_msgs %}
-          <div class='row'> 
-            <div class='reactions'>
-                {% for reaction_class in reaction_types %}
-                  {% if msg.id in reaction_types[reaction_class] %}
-                  <i class="fas {{reaction_class}}"></i>
-                  {% else %}
-                  <i class="far {{reaction_class}}"></i>
-                  {% endif %}
-                {% endfor %}
+          {{thread.dms[-1].text}}
 
-            </div>
-          </div>
-          {% endif %}
         </div>
+       
       </div>
-
-
     {% endfor %}
 
 

@@ -38,6 +38,19 @@ $(document).ready(function() {
       });
     }
   });
+
+  $('#dm-form').on('submit', function(evt) {
+    evt.preventDefault();
+    let text = $('#dm-input').val();
+    if (text.length > 1) {
+      let threadArr = document.URL.split('/');
+      let threadId = parseInt(threadArr[threadArr.length - 1]);
+      $('#dm-form').trigger('reset');
+      addDM(text, threadId, function(resp) {
+        generateDMs(resp);
+      });
+    }
+  });
 });
 
 // function getUserId(cb) {
@@ -74,4 +87,23 @@ function deleteReaction(type, msgId, cb) {
       cb(response);
     }
   });
+}
+
+function addDM(text, threadId, cb) {
+  $.ajax({
+    method: 'POST',
+    url: `${BASE_URL}/threads/${threadId}/dm/add`,
+    contentType: 'application/json',
+    data: JSON.stringify({ text }),
+    success: response => {
+      cb(response);
+    }
+  });
+}
+
+function generateDMs(dmsArr, cb) {
+  $('.dm-list').empty();
+  for (let i = 0; i < dmsArr.length; i++) {
+    $('.dm-list').append($(`<div class="dm row">${dmsArr[i]}</div><br>`));
+  }
 }

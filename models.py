@@ -26,24 +26,30 @@ class FollowersFollowee(db.Model):
         primary_key=True,
     )
 
+
 class Thread(db.Model):
     """Connection from one user to another for a dm """
 
     __tablename__ = 'threads'
 
     id = db.Column(
-        db.Integer, autoincrement=True
+        db.Integer, autoincrement=True, primary_key=True
     )
 
     user1_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade"), primary_key=True 
-    )
+        db.ForeignKey('users.id', ondelete="cascade"))
 
     user2_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade"), primary_key=True
-    )
+        db.ForeignKey('users.id', ondelete="cascade"))
+
+    db.UniqueConstraint('user1_id', 'user2_id')
+
+    user1 = db.relationship("User", foreign_keys=[user1_id])
+    user2 = db.relationship("User", foreign_keys=[user2_id])
+
+    dms = db.relationship("DM", backref="thread")
 
 
 class User(db.Model):
@@ -104,7 +110,7 @@ class User(db.Model):
         secondaryjoin=(FollowersFollowee.followee_id == id),
         backref=db.backref('following', lazy='dynamic'),
         lazy='dynamic')
-    
+
     people_talking_to = db.relationship(
         "User",
         secondary="threads",
@@ -218,9 +224,6 @@ class Reaction(db.Model):
         db.String, nullable=False, primary_key=True)
 
 
-
-
-
 class DM(db.Model):
     """the exact message, connected to a thread"""
     __tablename__ = 'dms'
@@ -246,8 +249,6 @@ class DM(db.Model):
         db.ForeignKey('threads.id', ondelete='CASCADE'),
         nullable=False,
     )
-
-
 
 
 def connect_db(app):

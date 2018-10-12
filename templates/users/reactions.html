@@ -26,7 +26,7 @@
                             {% for reaction_class in reaction_types %}
                               {% if msg.id in reaction_types[reaction_class] %}
                               <i class="fas {{reaction_class}}"></i>
-                              {% else %}
+                            {% else %}
                               <i class="far {{reaction_class}}"></i>
                               {% endif %}
                             {% endfor %}

@@ -573,3 +573,29 @@ p.card-bio {
   line-height: 40px;
   margin-left: 27px;
 }
+
+.dm.container {
+  background-color: white;
+}
+
+.dm-header {
+  text-align: center;
+}
+
+.dm.row {
+  background-color: rgb(0, 121, 255);
+  color: white;
+  max-width: 300px;
+  border-radius: 140px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-left: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#dm-input {
+  text-align: right;
+}
