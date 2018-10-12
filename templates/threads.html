@@ -1,22 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="row">
+<div class="row">
+  <div class='container'>
+
     {% for thread in my_user2_threads %}
-    <div class='row'> 
-        <div class='col-2'> 
-            <a href="/threads/{{ thread.id  }}" class="message-link">
-                <img src="{{ thread.user1.image_url }}" alt="" class="timeline-image">
-                <div>{{thread.user1.username}}</div></a>
-        </div>
-        <div class='col-10'>
-          {{thread.dms[-1].text}}
-
-        </div>
-       
+    <div class='row'>
+      <div class='col-2'>
+        <a href="/threads/{{ thread.id  }}" class="message-link">
+          <img src="{{ thread.user1.image_url }}" alt="" class="timeline-image">
+          <div>{{thread.user1.username}}</div>
+        </a>
       </div>
+      <div class='col-10'>
+        {{thread.dms[-1].text}}
+
+      </div>
+
+    </div>
     {% endfor %}
-
-
-
   </div>
+
+
+
+</div>
 {% endblock %}
