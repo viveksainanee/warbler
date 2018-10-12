@@ -26,6 +26,25 @@ class FollowersFollowee(db.Model):
         primary_key=True,
     )
 
+class Thread(db.Model):
+    """Connection from one user to another for a dm """
+
+    __tablename__ = 'threads'
+
+    id = db.Column(
+        db.Integer, autoincrement=True
+    )
+
+    user1_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"), primary_key=True 
+    )
+
+    user2_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"), primary_key=True
+    )
+
 
 class User(db.Model):
     """User in the system."""
@@ -84,6 +103,14 @@ class User(db.Model):
         primaryjoin=(FollowersFollowee.follower_id == id),
         secondaryjoin=(FollowersFollowee.followee_id == id),
         backref=db.backref('following', lazy='dynamic'),
+        lazy='dynamic')
+    
+    people_talking_to = db.relationship(
+        "User",
+        secondary="threads",
+        primaryjoin=(Thread.user1_id == id),
+        secondaryjoin=(Thread.user2_id == id),
+        backref=db.backref('people_talking_to_me', lazy='dynamic'),
         lazy='dynamic')
 
     def __repr__(self):
@@ -189,6 +216,38 @@ class Reaction(db.Model):
         nullable=False, primary_key=True)
     reaction_type = db.Column(
         db.String, nullable=False, primary_key=True)
+
+
+
+
+
+class DM(db.Model):
+    """the exact message, connected to a thread"""
+    __tablename__ = 'dms'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True, autoincrement=True
+    )
+
+    text = db.Column(
+        db.Text,
+        nullable=False,
+    )
+
+    timestamp = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow(),
+    )
+
+    thread_id = db.Column(
+        db.Integer,
+        db.ForeignKey('threads.id', ondelete='CASCADE'),
+        nullable=False,
+    )
+
+
 
 
 def connect_db(app):

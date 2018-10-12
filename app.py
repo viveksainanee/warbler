@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
-from models import db, connect_db, User, Message, Reaction
+from models import db, connect_db, User, Message, Reaction, Thread, DM
 
 CURR_USER_KEY = "curr_user"
 
@@ -404,6 +404,37 @@ def page_not_found(e):
     """404 NOT FOUND page."""
 
     return render_template('404.html'), 404
+
+
+##############################################################################
+# Thread and DM pages
+
+
+@app.route('/threads')
+def list_threads():
+    """Page with listing of threads.
+    """
+    my_user1_threads = Thread.query.filter(Thread.user1_id==g.user.id)
+    my_user2_threads = Thread.query.filter(Thread.user2_id==g.user.id)
+
+
+    return render_template('threads.html', my_user1_threads=my_user1_threads, my_user2_threads=my_user2_threads)
+
+# @app.route('/threads/add')
+# def list_threads():
+#     """Page with listing of threads.
+#     """
+#     threads = Thread.query.filter(or_(Thread.user1_id==g.user.id, Thread.user2_id==g.user.id))
+    
+
+
+
+
+#     return render_template('threads.html', threads=threads)
+
+
+
+
 
 
 ##############################################################################
