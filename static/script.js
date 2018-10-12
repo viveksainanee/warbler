@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'https://warbler-vsha2.herokuapp.com';
 
 $(document).ready(function() {
   $('.far, .fas').on('click', function(evt) {
