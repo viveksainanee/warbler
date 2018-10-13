@@ -4,7 +4,11 @@
     <h1 class="dm-header">{{other_username}}</h1>
     <div class="dm-list">
       {% for dm in thread.dms %}
-      <div class="dm row">{{dm.text}}</div>
+      {% if dm.author == g.user.id %}
+          <div class="my dm-row">{{dm.text}}</div>
+          {% else %}
+          <div class="their dm-row">{{dm.text}}</div>
+      {% endif %} 
       {% endfor %}
     </div>
     <div class="row">

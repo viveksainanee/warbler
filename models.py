@@ -250,6 +250,13 @@ class DM(db.Model):
         nullable=False,
     )
 
+    author = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False,
+    )
+    user = db.relationship("User", backref="dm")
+
 
 def connect_db(app):
     """Connect this database to provided Flask app.

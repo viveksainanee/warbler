@@ -1,4 +1,5 @@
-const BASE_URL = 'https://warbler-vsha2.herokuapp.com';
+// const BASE_URL = 'https://warbler-vsha2.herokuapp.com';
+const BASE_URL = 'http://localhost:5000';
 
 $(document).ready(function() {
   $('.far, .fas').on('click', function(evt) {
@@ -104,6 +105,6 @@ function addDM(text, threadId, cb) {
 function generateDMs(dmsArr, cb) {
   $('.dm-list').empty();
   for (let i = 0; i < dmsArr.length; i++) {
-    $('.dm-list').append($(`<div class="dm row">${dmsArr[i]}</div><br>`));
+    $('.dm-list').append($(`<div class="my dm row">${dmsArr[i]}</div><br>`));
   }
 }

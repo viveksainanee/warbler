@@ -4,19 +4,37 @@
   <div class='container'>
 
     {% for thread in my_user2_threads %}
-    <div class='row'>
+    <a href="/threads/{{ thread.id  }}" class="thread-link">
+    <div class='row message-row'>
       <div class='col-2'>
-        <a href="/threads/{{ thread.id  }}" class="message-link">
           <img src="{{ thread.user1.image_url }}" alt="" class="timeline-image">
           <div>{{thread.user1.username}}</div>
-        </a>
+        </div>
+        <div class='col-10'>
+          {% if thread.dms %}
+            {{thread.dms[-1].text}}        
+          {% endif %}
+        </div>
+        
       </div>
-      <div class='col-10'>
-        {{thread.dms[-1].text}}
-
+    </a>
+    {% endfor %}
+    {% for thread in my_user1_threads %}
+    <a href="/threads/{{ thread.id  }}" class="thread-link">
+    <div class='row message-row'>
+      <div class='col-2'>
+          <img src="{{ thread.user2.image_url }}" alt="" class="timeline-image">
+          <div>{{thread.user2.username}}</div>
+        </div>
+        <div class='col-10'>
+          {% if thread.dms %}
+            {{thread.dms[-1].text}}        
+          {% endif %}
+  
+        </div>
+        
       </div>
-
-    </div>
+    </a>
     {% endfor %}
   </div>
 

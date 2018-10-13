@@ -415,10 +415,9 @@ def list_threads():
     """Page with listing of threads.
     """
     # query the threads where I'm user 1
-    my_user1_threads = Thread.query.filter(Thread.user1_id == g.user.id)
+    my_user1_threads = Thread.query.filter(Thread.user1_id == g.user.id).all()
     # query the threads where I'm user 2
-    my_user2_threads = Thread.query.filter(Thread.user2_id == g.user.id)
-
+    my_user2_threads = Thread.query.filter(Thread.user2_id == g.user.id).all()
     return render_template('threads.html', my_user1_threads=my_user1_threads, my_user2_threads=my_user2_threads)
 
     # get all the users talk to me
@@ -433,6 +432,20 @@ def list_threads():
 @app.route('/threads/add/<int:user_id>', methods=['POST'])
 def add_thread(user_id):
     """Page to add a thread. """
+    # if this user id combo exists
+    thread = Thread.query.filter(
+        Thread.user1_id == user_id, Thread.user2_id == g.user.id).all()
+
+    thread2 = Thread.query.filter(
+        Thread.user2_id == user_id, Thread.user1_id == g.user.id).all()
+
+    if thread:
+        return redirect(f'threads/{thread[0].id}')
+
+    if thread2:
+        return redirect(f'threads/{thread2[0].id}')
+
+    # else:
     if (user_id < g.user.id):
         new_thread = Thread(user1_id=user_id, user2_id=g.user.id)
     else:
@@ -463,7 +476,7 @@ def add_dm(thread_id):
     """adds a dm"""
     thread = Thread.query.get(thread_id)
     text = request.json["text"]
-    dm = DM(text=text, thread_id=thread_id)
+    dm = DM(text=text, thread_id=thread_id, author=g.user.id)
     db.session.add(dm)
     db.session.commit()
     all_dms = [dm.text for dm in thread.dms]
