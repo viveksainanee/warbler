@@ -22,21 +22,28 @@
               </a>
 
               {% if g.user %}
-              {% if g.user.is_following(user) %}
-              <form method="POST" action="/users/stop-following/{{ user.id }}">
-                <button class="btn btn-primary btn-sm">Unfollow</button>
-              </form>
-              {% else %}
-              <form method="POST" action="/users/follow/{{ user.id }}">
-                <button class="btn btn-outline-primary btn-sm">Follow</button>
-              </form>
-              {% endif %}
-              <div class="row">
-                <form method="POST" action="/threads/add/{{ user.id }}">
-                  <button class="btn btn-outline-primary btn-sm">Message</button>
-                </form>
-              </div>
+              <div class="container">
 
+                <div class="row">
+
+                  {% if g.user.is_following(user) %}
+                  <form method="POST" class="ml-auto" action="/users/stop-following/{{ user.id }}">
+                    <button class="btn btn-primary btn-sm">Unfollow</button>
+                  </form>
+                  {% else %}
+                  <form method="POST" class="ml-auto" action="/users/follow/{{ user.id }}">
+                    <button class="btn btn-outline-primary btn-sm">Follow</button>
+                  </form>
+                  {% endif %}
+                </div>
+
+                <div class="row">
+                  <form method="POST" class="ml-auto" action="/threads/add/{{ user.id }}">
+                    <button class="btn btn-outline-primary btn-sm">Message</button>
+                  </form>
+                </div>
+
+              </div>
 
               {% endif %}
 

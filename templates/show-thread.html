@@ -5,15 +5,15 @@
     <div class="dm-list">
       {% for dm in thread.dms %}
       {% if dm.author == g.user.id %}
-          <div class="my dm-row">{{dm.text}}</div>
+          <div class="my dm-row ml-auto">{{dm.text}}</div>
           {% else %}
           <div class="their dm-row">{{dm.text}}</div>
       {% endif %} 
       {% endfor %}
     </div>
     <div class="row">
-      <form id="dm-form">
-        <input type="text" id="dm-input" placeholder="Enter message here">
+      <form id="dm-form" class="ml-auto">
+        <input type="text" id="dm-input" placeholder="Enter message here" cols="40">
         <input type="submit" id="dm-submit" value="Send" class="btn btn-primary">
       </form>
     </div>

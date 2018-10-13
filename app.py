@@ -479,7 +479,7 @@ def add_dm(thread_id):
     dm = DM(text=text, thread_id=thread_id, author=g.user.id)
     db.session.add(dm)
     db.session.commit()
-    all_dms = [dm.text for dm in thread.dms]
+    all_dms = [[dm.text, dm.author] for dm in thread.dms]
     return jsonify(all_dms)
 
 

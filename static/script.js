@@ -48,7 +48,7 @@ $(document).ready(function() {
       let threadId = parseInt(threadArr[threadArr.length - 1]);
       $('#dm-form').trigger('reset');
       addDM(text, threadId, function(resp) {
-        generateDMs(resp);
+        console.log(resp);
       });
     }
   });
@@ -100,11 +100,6 @@ function addDM(text, threadId, cb) {
       cb(response);
     }
   });
-}
-
-function generateDMs(dmsArr, cb) {
-  $('.dm-list').empty();
-  for (let i = 0; i < dmsArr.length; i++) {
-    $('.dm-list').append($(`<div class="my dm row">${dmsArr[i]}</div><br>`));
-  }
+  // append it to the dom
+  $('.dm-list').append($(`<div class="my dm-row ml-auto">${text}</div>`));
 }
